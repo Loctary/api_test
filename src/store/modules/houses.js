@@ -16,7 +16,7 @@ export default function userReducer(state = initialState, action) {
     case FETCH_HOUSES_SUCCESS:
       return { ...state, pending: false, ...action.payload };
     case FETCH_HOUSES_ERROR:
-      return { ...state, pending: false, errors: action.errors };
+      return { pending: false, errors: action.errors };
     default:
       return state;
   }

@@ -41,6 +41,14 @@ class App extends Component {
     this.setState({ currentPage: selected });
   };
 
+  handleItemsChange = event => {
+    const itemsPerPage = parseInt(event.target.value, 10);
+    this.setState({ itemsPerPage, currentPage: 0 }, () => {
+      const url = `${API}?${LIMIT + itemsPerPage}&${OFFSET + 0}`;
+      this.fetchData(url);
+    });
+  };
+
   render() {
     const {
       props: {
@@ -70,6 +78,15 @@ class App extends Component {
           activeClassName="active"
           forcePage={currentPage}
         />
+        <div className="items-per-page">
+          <p>Select items per page: </p>
+          <select value={itemsPerPage} onChange={this.handleItemsChange}>
+            <option value={10}>10</option>
+            <option value={20}>20</option>
+            <option value={50}>50</option>
+            <option value={100}>100</option>
+          </select>
+        </div>
       </div>
     );
   }
