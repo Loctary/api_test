@@ -1,12 +1,27 @@
-const HOUSES_FETCH_DATA = 'HOUSES_FETCH_DATA';
+const FETCH_HOUSES_PENDING = 'FETCH_HOUSES_PENDING';
+const FETCH_HOUSES_SUCCESS = 'FETCH_HOUSES_SUCCESS';
+const FETCH_HOUSES_ERROR = 'FETCH_HOUSES_ERROR';
 
-export default function userReducer(state = {}, action) {
+const initialState = {
+  pending: true,
+  pagination: {
+    offset: 0,
+  },
+};
+
+export default function userReducer(state = initialState, action) {
   switch (action.type) {
-    case HOUSES_FETCH_DATA:
-      return state;
+    case FETCH_HOUSES_PENDING:
+      return { ...state, pending: true };
+    case FETCH_HOUSES_SUCCESS:
+      return { ...state, pending: false, ...action.payload };
+    case FETCH_HOUSES_ERROR:
+      return { ...state, pending: false, errors: action.errors };
     default:
       return state;
   }
 }
 
-export const housesFetchData = payload => ({ type: HOUSES_FETCH_DATA, payload });
+export const fetchHouses = () => ({ type: FETCH_HOUSES_PENDING });
+export const fetchHousesSuccess = payload => ({ type: FETCH_HOUSES_SUCCESS, payload });
+export const fetchHousesError = payload => ({ type: FETCH_HOUSES_ERROR, payload });
