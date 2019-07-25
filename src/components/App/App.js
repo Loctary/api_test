@@ -6,6 +6,7 @@ import ReactPaginate from 'react-paginate';
 import { fetchHouses, fetchHousesSuccess, fetchHousesError } from '../../store/modules/houses';
 // components
 import HouseCard from '../HouseCard/HouseCard';
+import Header from '../Header/Header';
 // styles
 import './App.scss';
 
@@ -69,14 +70,16 @@ class App extends Component {
     if (errors)
       return (
         <Fragment>
-          <h1>Error occured</h1>
+          <Header />
+          <h1 className="error">Произошла ошибка</h1>
           <button
+            className="reload"
             type="button"
             onClick={() => {
               this.handlePageChange({ selected: currentPage });
             }}
           >
-            Retry
+            Перезагрузить
           </button>
         </Fragment>
       );
@@ -84,8 +87,17 @@ class App extends Component {
 
     return (
       <Fragment>
+        <Header />
+        <div className="navigation">
+          <a>Элитная загородная недвижимость</a>
+          <span>&gt;</span>
+          <a>Продажа</a>
+          <span>&gt;</span>
+          <a>Дом</a>
+        </div>
+        <h1 className="elite-header">Элитная недвижимость в Подмосковье</h1>
         {pending ? (
-          <h1 className="loading">Loading...</h1>
+          <h1 className="loading">Загрузка...</h1>
         ) : (
           <div className="houses">
             {items &&
