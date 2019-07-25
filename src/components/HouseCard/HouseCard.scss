@@ -1,0 +1,33 @@
+.house {
+    padding: 10px;
+    border: 1px solid #e8e8e8;
+
+    h4 {
+        margin-bottom: 0;
+    }
+
+    .house-img {
+        width: 490px;
+        height: 400px;
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    .description {
+        color: #636363;
+    }
+
+    .specifications {
+        display: flex;
+        align-items: center;
+
+        .area {
+            position: relative;
+            top: -2px;
+            padding: 0 50px;
+        }
+    }
+}

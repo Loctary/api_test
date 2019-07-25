@@ -1,0 +1,63 @@
+.loading {
+    text-align: center;
+}
+
+.houses {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 0 auto;
+}
+
+.pagination {
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    padding-left: 15px;
+    padding-right: 15px;
+
+    li {
+        display: inline-block;
+        cursor: pointer;
+        border: 1px solid #e8e8e8;
+
+        &:hover {
+            background: #e8e8e8;
+        }
+
+        a {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 30px;
+            height: 40px;
+
+            &:focus {
+                outline: none;
+            }
+        }
+    }
+
+    .active {
+        font-weight: bold;
+        color: blue;
+    }
+
+    .disabled {
+        &:hover {
+            background: #fff;
+            cursor: default;
+        }
+    }
+}
+
+.items-per-page {
+    position: relative;
+    top: -44px;
+    display: flex;
+    width: 150px;
+
+    p {
+        margin: 5px;
+    }
+}

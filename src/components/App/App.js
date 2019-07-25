@@ -1,8 +1,13 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
+// actions
 import { fetchHouses, fetchHousesSuccess, fetchHousesError } from '../../store/modules/houses';
+// components
+import HouseCard from '../HouseCard/HouseCard';
+// styles
+import './App.scss';
 
 const API = `https://api.jqestate.ru/v1/properties/country`;
 const LIMIT = 'pagination[limit]=';
@@ -10,7 +15,7 @@ const OFFSET = 'pagination[offset]=';
 
 class App extends Component {
   state = {
-    itemsPerPage: 10,
+    itemsPerPage: 12,
     currentPage: 0,
   };
 
@@ -28,7 +33,7 @@ class App extends Component {
     fetch(url)
       .then(response => response.json())
       .then(data => {
-        if (data.errors) throw data.errors;
+        if (data.errors) throw (data.errors && data.errors[0]) || 'Error';
         props.fetchHousesSuccess({ ...data });
       })
       .catch(errors => props.fetchHousesError({ errors }));
@@ -55,19 +60,43 @@ class App extends Component {
         houses: {
           pending,
           pagination: { total },
+          items,
+          errors,
         },
       },
       state: { currentPage, itemsPerPage },
     } = this;
-
+    if (errors)
+      return (
+        <Fragment>
+          <h1>Error occured</h1>
+          <button
+            type="button"
+            onClick={() => {
+              this.handlePageChange({ selected: currentPage });
+            }}
+          >
+            Retry
+          </button>
+        </Fragment>
+      );
     const pageCount = Math.ceil(total / itemsPerPage);
+
     return (
-      <div>
-        {pending && <h1>Loading...</h1>}
-        <div />
+      <Fragment>
+        {pending ? (
+          <h1 className="loading">Loading...</h1>
+        ) : (
+          <div className="houses">
+            {items &&
+              items.map((element, id) => (
+                <HouseCard key={`house#${itemsPerPage * currentPage + id}`} HouseCard house={element} />
+              ))}
+          </div>
+        )}
         <ReactPaginate
-          previousLabel="previous"
-          nextLabel="next"
+          previousLabel="<"
+          nextLabel=">"
           breakClassName="break-me"
           pageCount={pageCount}
           marginPagesDisplayed={2}
@@ -79,15 +108,15 @@ class App extends Component {
           forcePage={currentPage}
         />
         <div className="items-per-page">
-          <p>Select items per page: </p>
+          <p>На странице: </p>
           <select value={itemsPerPage} onChange={this.handleItemsChange}>
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-            <option value={100}>100</option>
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={48}>48</option>
+            <option value={96}>96</option>
           </select>
         </div>
-      </div>
+      </Fragment>
     );
   }
 }
@@ -102,6 +131,8 @@ App.propTypes = {
       offset: PropTypes.number,
       total: PropTypes.number,
     }),
+    items: PropTypes.instanceOf(Array),
+    errors: PropTypes.oneOfType([PropTypes.shape({}), PropTypes.string]),
   }).isRequired,
 };
 
