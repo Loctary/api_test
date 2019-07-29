@@ -8,6 +8,7 @@ const pagination = {
 };
 
 const initialState = {
+  items: [],
   errors: null,
   pending: true,
   pagination,
@@ -18,9 +19,15 @@ export default function userReducer(state = initialState, action) {
     case FETCH_HOUSES_PENDING:
       return { ...state, pending: true };
     case FETCH_HOUSES_SUCCESS:
-      return { ...state, pending: false, ...action.payload, errors: null };
+      return {
+        ...state,
+        ...action.payload,
+        pending: false,
+        errors: null,
+        items: [...state.items, ...action.payload.items],
+      };
     case FETCH_HOUSES_ERROR:
-      return { pending: false, errors: action.payload.errors, pagination };
+      return { ...state, pending: false, errors: action.payload.errors, pagination };
     default:
       return state;
   }

@@ -31,7 +31,7 @@ const HouseCard = props => {
         }, ID ${id}`}</p>
       </div>
 
-      <h4>{`${saleOffer ? `$ ${saleOffer.price.toLocaleString('ru-RU')}` : 'не для продажи'}`}</h4>
+      <h4>{`${saleOffer ? `$${saleOffer.price.toLocaleString('ru-RU')}` : 'не для продажи'}`}</h4>
       <div className="specifications">
         <div className="area">
           <Area1 className="area-icon" />

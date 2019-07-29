@@ -1,7 +1,8 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { Component, Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import ReactPaginate from 'react-paginate';
+import InfiniteScroll from 'react-infinite-scroller';
 // actions
 import { fetchHouses, fetchHousesSuccess, fetchHousesError } from '../../store/modules/houses';
 // components
@@ -40,33 +41,26 @@ class App extends Component {
       .catch(errors => props.fetchHousesError({ errors }));
   };
 
-  handlePageChange = ({ selected }) => {
+  handleLoad = page => {
     const { itemsPerPage } = this.state;
-    const url = `${API}?${LIMIT + itemsPerPage}&${OFFSET + itemsPerPage * selected}`;
+    const url = `${API}?${LIMIT + itemsPerPage}&${OFFSET + itemsPerPage * page}`;
     this.fetchData(url);
-    this.setState({ currentPage: selected });
-  };
-
-  handleItemsChange = event => {
-    const itemsPerPage = parseInt(event.target.value, 10);
-    this.setState({ itemsPerPage, currentPage: 0 }, () => {
-      const url = `${API}?${LIMIT + itemsPerPage}&${OFFSET + 0}`;
-      this.fetchData(url);
-    });
+    this.setState({ currentPage: page });
   };
 
   render() {
     const {
       props: {
         houses: {
+          items,
           pending,
           pagination: { total },
-          items,
           errors,
         },
       },
       state: { currentPage, itemsPerPage },
     } = this;
+
     if (errors)
       return (
         <Fragment>
@@ -76,14 +70,13 @@ class App extends Component {
             className="reload"
             type="button"
             onClick={() => {
-              this.handlePageChange({ selected: currentPage });
+              this.handleLoad(currentPage);
             }}
           >
             Перезагрузить
           </button>
         </Fragment>
       );
-    const pageCount = Math.ceil(total / itemsPerPage);
 
     return (
       <Fragment>
@@ -96,38 +89,20 @@ class App extends Component {
           <a>Дом</a>
         </div>
         <h1 className="elite-header">Элитная недвижимость в Подмосковье</h1>
-        {pending ? (
-          <h1 className="loading">Загрузка...</h1>
-        ) : (
+        <InfiniteScroll
+          className="scroll-content"
+          pageStart={currentPage}
+          loadMore={this.handleLoad}
+          hasMore={itemsPerPage * (currentPage + 1) < total && !pending}
+          loader={pending && <h1 className="loading">Загрузка...</h1>}
+        >
           <div className="houses">
             {items &&
               items.map((element, id) => (
                 <HouseCard key={`house#${itemsPerPage * currentPage + id}`} HouseCard house={element} />
               ))}
           </div>
-        )}
-        <ReactPaginate
-          previousLabel="<"
-          nextLabel=">"
-          breakClassName="break-me"
-          pageCount={pageCount}
-          marginPagesDisplayed={2}
-          pageRangeDisplayed={5}
-          onPageChange={this.handlePageChange}
-          containerClassName="pagination"
-          subContainerClassName="pages pagination"
-          activeClassName="active"
-          forcePage={currentPage}
-        />
-        <div className="items-per-page">
-          <p>На странице: </p>
-          <select value={itemsPerPage} onChange={this.handleItemsChange}>
-            <option value={12}>12</option>
-            <option value={24}>24</option>
-            <option value={48}>48</option>
-            <option value={96}>96</option>
-          </select>
-        </div>
+        </InfiniteScroll>
       </Fragment>
     );
   }
